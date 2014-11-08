@@ -23,9 +23,8 @@ var config = {
 		"src": "./html/**/*.html", //location of source HTML files
 		"dest": "", //destination directory
 		"variables": { //values pre-processed into HTML at compile time
-			"JS_SRC": "js/scripts.js",
+			"JS_SRC": "js/app.js",
 			"JS_HEADER_SRC": "js/header.js",
-			"JS_VENDOR_SRC": "js/vendor.js"
 		}		
 	},
 
@@ -43,25 +42,17 @@ var config = {
 	},
 
 	js: {
-		"dest": "js", //destination directory
-		"app": {
-			"src": "./js/app.js", //source "main" JS (first JS to appear in js.app.dest file)			
-			"dest": "scripts.js", //target name for source JavaScript file
-			"init": {
-				"src": "./js/init.js", //init JavaScript code (last JS to appear in js.app.dest file)
-			},
-			"modules": {
-				"src": "./js/modules/**/*.js", //location of JavaScript module source files
-			},			
+		app: {
+			"src": "./js/app.js" //entry path for main .js file
 		},
-		"vendor": {
-			"src": "./js/vendor/**/*.js", //location of vendor JavaScript source files
-			"dest": "vendor.js" //target name for vendor JavaScript file
+		modules: {
+			"src": "./js/modules/**/*.js", //source of main modules
+			"path": "./js/modules" //path to modules directory
 		},
-		"header": {
-			"src": "./js/header/**/*.js", //location of header JavaScript source files
-			"dest": "header.js" //target name for header JavaScript file
-		}			
+		header: {
+			"src": "./js/header/header.js" //entry path for header .js file
+		},		
+		dest: "js", //destination directory inside "dev" and "dist" 
 	}
 }
 

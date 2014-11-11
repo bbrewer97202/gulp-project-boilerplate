@@ -37,6 +37,7 @@ module.exports = {
 		modulesDirectories: ['node_modules', config.js.modules.path]
 	},
 	plugins: [
+		new webpack.optimize.DedupePlugin(),		
 		new webpack.ProvidePlugin({
 			jQuery: "jquery",
 			$: "jquery"

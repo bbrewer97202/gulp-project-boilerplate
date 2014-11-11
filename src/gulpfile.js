@@ -100,30 +100,25 @@ gulp.task('jshint', function() {
 
 //javascript
 gulp.task('js', ['jshint', 'webpack']);
-// gulp.task('js', ['webpack']);
 
 //webpack
 gulp.task('webpack', function() {
 
 	//configuration extends base configuration to handle dev/dist targets
-	var envConfig = Object.create(webpackConfig);
-	envConfig.output.path = config.paths[target] + config.js.dest;
+	webpackConfig.output.path = config.paths[target] + config.js.dest;
 
 	//production settings
 	if (isProduction) {
-		envConfig.plugins = envConfig.plugins.concat([
-			new webpack.optimize.DedupePlugin(),
-			new webpack.optimize.UglifyJsPlugin()			
-		]);
+	  	webpackConfig.plugins = webpackConfig.plugins.concat(
+			new webpack.optimize.UglifyJsPlugin()
+		);
 	}
 
-	webpack(envConfig, function(err, stats) {
+	webpack(webpackConfig, function(err, stats) {
         if (err) {
-        	//TODO: enable notify here
         	notify("error:" + err.message);
         	throw new gulputil.PluginError("webpack", err);
         }
-
         //TODO: enable logging
 		// gulputil.log("[webpack]", stats.toString({
 		// 	colors: true
@@ -135,7 +130,7 @@ gulp.task('webpack', function() {
 gulp.task('browsersync', function() {
 	browsersync({
 		server: {
-			baseDir: config.paths.dev
+			baseDir: config.paths[target]
 		}
 	});
 });

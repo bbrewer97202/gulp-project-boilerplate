@@ -1,10 +1,15 @@
-app.fpo2 = (function() {
+"use strict";
+
+var $ = require('jquery');
+
+var fpo2 = (function() {
 
 	/**
 	 * initialization
 	 */
 	function init() {
 		console.log("fpo2 init() called");
+		$('body').trigger('testevent');
 	}
 
 	//public methods
@@ -13,3 +18,5 @@ app.fpo2 = (function() {
 	};
 
 }());
+
+module.exports = fpo2;

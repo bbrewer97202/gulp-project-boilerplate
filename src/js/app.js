@@ -1,13 +1,15 @@
-var app = (function() {
+"use strict";
 
-	"use strict";
+var fpo = require('fpo');
+
+var app = (function() {
 
 	/**
 	 * initialization
 	 */
 	function init() {
 		console.log("app init() called");
-		app.fpo.init();
+		fpo.init();
 	}
 
 	//public methods
@@ -16,3 +18,7 @@ var app = (function() {
 	};
 
 }());
+
+document.addEventListener('DOMContentLoaded', function() {
+	app.init();	
+});

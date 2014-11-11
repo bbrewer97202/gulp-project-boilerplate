@@ -1,21 +1,25 @@
 var gulp = require('gulp'),
 	browsersync = require('browser-sync'),
-	changed = require('gulp-changed'),
-	concat = require('gulp-concat'),
 	del = require('del'),
 	gulpif = require('gulp-if'),
+	gulputil = require('gulp-util'),
 	imagemin = require('gulp-imagemin'),
 	jshint = require('gulp-jshint'),
+	map = require('map-stream'),
 	minifyCSS = require('gulp-minify-css'),
 	minimist = require('minimist'),
+	notify = require('gulp-notify'),
+	path = require('path'),
+	plumber = require('gulp-plumber'),
 	pngcrush = require('imagemin-pngcrush'),
 	preprocess = require('gulp-preprocess'),
 	sass = require('gulp-sass'),
 	sourcemaps = require('gulp-sourcemaps'),
-	uglify = require('gulp-uglify');
+	webpack = require('webpack');
 
-//config file is required
-var config = require('./gulp-config.js');
+//required config files 
+var config = require('./config.js');
+var webpackConfig = require('./webpack.config.js');
 
 //default to development build
 var isProduction = false;
@@ -51,13 +55,17 @@ gulp.task('images', function() {
 	options.use = [pngcrush()];
 
 	return gulp.src(config.images.src)
+		.pipe(plumber())
 		// .pipe(gulpif(isProduction, imagemin(config.images.imagemin))) //not working correctly
 		.pipe(gulp.dest(config.paths[target] + config.images.dest));
 });
 
 //sass
 gulp.task('sass', function() {
+
+	//TODO: add autoprefixer
 	gulp.src(config.sass.src)
+		.pipe(plumber())
 		.pipe(sourcemaps.init())
 		.pipe(gulpif(isProduction, sass(), sass(config.sass.config)))
 		.pipe(sourcemaps.write())
@@ -65,36 +73,62 @@ gulp.task('sass', function() {
 		.pipe(gulp.dest(config.paths[target] + config.css.dest));
 });
 
-//JavaScript
-gulp.task('js', function() {
-
-	/**
-	 * "app" source js compiled into one file with:
-	 *   1) "main" file as first entry
-	 *   2) all javascript modules 
-	 *   3) init file as last entry
-	 */
-	gulp.src([
+//javascript linting
+gulp.task('jshint', function() {
+	return gulp.src([
 			config.js.app.src, 
-			config.js.app.modules.src,
-			config.js.app.init.src,
+			config.js.modules.src
 		])
-		.pipe(concat(config.js.app.dest))
+		.pipe(plumber())
 		.pipe(gulpif(!isProduction, jshint('.jshintrc')))	
-		.pipe(gulpif(!isProduction, jshint.reporter('jshint-stylish')))
-		.pipe(gulpif(isProduction, uglify()))
-		.pipe(gulp.dest(config.paths[target] + config.js.dest));
+		.pipe(gulpif(!isProduction, notify(function (file) {
+			if (file.jshint.success) {
+				return false;
+			}
+			notify.logLevel(0);
 
-	//vendor js compiled into one file
-	gulp.src(config.js.vendor.src)
-		.pipe(concat(config.js.vendor.dest))
-		.pipe(gulp.dest(config.paths[target] + config.js.dest));
+			var errors = file.jshint.results.map(function(data) {
+				if (data.error) {
+					return 'Line ' + data.error.line +'\n' + ': ' + data.error.reason + '\n';
+				}
+			}).join("\n");
 
-	//header js compiled into one file
-	gulp.src(config.js.header.src)
-		.pipe(concat(config.js.header.dest))
-		.pipe(gulp.dest(config.paths[target] + config.js.dest));
+			return path.basename(file.path) + " (" + file.jshint.results.length + " errors)\n" + errors + "\n";
+		})))
+		.pipe(gulpif(!isProduction, jshint.reporter('jshint-stylish')));
+});
 
+//javascript
+gulp.task('js', ['jshint', 'webpack']);
+// gulp.task('js', ['webpack']);
+
+//webpack
+gulp.task('webpack', function() {
+
+	//configuration extends base configuration to handle dev/dist targets
+	var envConfig = Object.create(webpackConfig);
+	envConfig.output.path = config.paths[target] + config.js.dest;
+
+	//production settings
+	if (isProduction) {
+		envConfig.plugins = envConfig.plugins.concat([
+			new webpack.optimize.DedupePlugin(),
+			new webpack.optimize.UglifyJsPlugin()			
+		]);
+	}
+
+	webpack(envConfig, function(err, stats) {
+        if (err) {
+        	//TODO: enable notify here
+        	notify("error:" + err.message);
+        	throw new gulputil.PluginError("webpack", err);
+        }
+
+        //TODO: enable logging
+		// gulputil.log("[webpack]", stats.toString({
+		// 	colors: true
+		// }));
+    });
 });
 
 //browsersync
@@ -115,8 +149,7 @@ gulp.task('watch', ['browsersync', 'build'], function() {
 	gulp.watch(config.sass.src, ['sass', browsersync.reload]);
 	gulp.watch([
 		config.js.app.src, 
-		config.js.app.modules.src,
-		config.js.app.init.src,
+		config.js.modules.src
 	], ['js', browsersync.reload]);
 	gulp.watch(config.images.src, ['images', browsersync.reload]);
 });

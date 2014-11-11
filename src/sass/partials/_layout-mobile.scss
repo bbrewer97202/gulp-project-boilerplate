@@ -1,5 +1,12 @@
 /***********************************************************************************
- * desktop.scss
+ * _layout-mobile.scss
  **********************************************************************************/
-@import "partials/layout-desktop";
-@import "partials/header-desktop";
+body {
+	margin: 0;
+	font-family: sans-serif;
+}
+
+.content {
+	width: 80%;
+	margin: 0 auto;
+}

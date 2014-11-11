@@ -99,8 +99,8 @@ gulp.task('jshint', function() {
 });
 
 //javascript
-//gulp.task('js', ['jshint', 'webpack']);
-gulp.task('js', ['webpack']);
+gulp.task('js', ['jshint', 'webpack']);
+// gulp.task('js', ['webpack']);
 
 //webpack
 gulp.task('webpack', function() {

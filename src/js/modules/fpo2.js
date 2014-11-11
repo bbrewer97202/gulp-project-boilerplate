@@ -1,6 +1,6 @@
 "use strict";
 
-var jquery = require('jquery');
+var $ = require('jquery');
 
 var fpo2 = (function() {
 
@@ -9,7 +9,7 @@ var fpo2 = (function() {
 	 */
 	function init() {
 		console.log("fpo2 init() called");
-		$('body').trigger('adsasdsadsa');
+		$('body').trigger('testevent');
 	}
 
 	//public methods

@@ -1,5 +1,6 @@
 /***********************************************************************************
- * desktop.scss
+ * _layout-desktop.scss
  **********************************************************************************/
-@import "partials/layout-desktop";
-@import "partials/header-desktop";
+body {
+	background-color: #eee;
+}

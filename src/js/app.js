@@ -19,4 +19,6 @@ var app = (function() {
 
 }());
 
-app.init();
+document.addEventListener('DOMContentLoaded', function() {
+	app.init();	
+});

@@ -1,14 +1,13 @@
 # gulp-project-boilerplate
-Boilerplate directory structure and gulp.js tasks for web projects.
+Boilerplate directory structure with gulp and webpack tasks for CommonJS web projects.
 
 ## Overview
 Use as a starting point for front-end development.  
-* Source directory ("src") contains all source files.  Build tasks create development ("dev") and production ("dist") instances.  
-* Assumes a CommonJS module pattern approach for JavaScript (framework-agnostic).
-* SASS generates CSS.
+Source directory ("src") contains all source files.  Build tasks create development ("dev") and production ("dist") instances.  
+
 
 ## Installation
-After cloning the project, cd into the "src" directory and run the following to install the node.js dev dependencies:
+After cloning the project, cd into the "src" directory and install the node.js dev dependencies:
 ```sh
 $ npm install
 ```
@@ -32,7 +31,7 @@ $ gulp --env production
 ```
 Compiles SASS to minified CSS, compiles minified JavaScript, runs image optimizations, copies source files to "dist" directory.
 
-####Start the "watch" task
+####Start the watch task
 ```sh
 $ gulp watch
 ```
@@ -43,19 +42,6 @@ Watches source files for modification and re-runs tasks, starts a local browser-
 $ gulp clean
 ```
 Removes the "dev" and "dist" directories.
-
-## Customization
-
-#####HTML
-Add your .html files and directories to /src/html.
-
-#####JavaScript
-Two JavaScript files are created in the build process:
-* *app.js* - Add custom JavaScript modules to /src/js/modules.  Modify /src/js/app.js as the "main" module of the project.
-* *header.js* - Add JavaScript files that need to appear in the document HEAD tag to /src/js/header and they will appear in this file.
-
-#####SASS
-Create .scss files that will be turned into CSS files under /src/sass.  Add partials for import to those files in directories under /src/sass/partials.
 
 ## License
 

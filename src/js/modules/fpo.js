@@ -1,5 +1,6 @@
 "use strict";
 
+var $ = require('jquery');
 var fpo2 = require('fpo2');
 
 var fpo = (function() {
@@ -9,7 +10,7 @@ var fpo = (function() {
 	 */
 	function init() {
 		console.log("fpo init() called");
-		$('body').on('adsasdsadsa', function() {
+		$('body').on('testevent', function() {
 			console.log("fpo saw event broadcast via jquery from fpo2");
 		});
 		fpo2.init();
